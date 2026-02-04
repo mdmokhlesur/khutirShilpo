@@ -37,3 +37,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - This is my first startup project
 This
 - I started this project in year 2021 after covid
+- Me and my two friends start this project
