@@ -38,3 +38,4 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 This
 - I started this project in year 2021 after covid
 - Me and my two friends start this project
+- And we won the best project bridge
