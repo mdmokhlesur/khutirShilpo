@@ -1,4 +1,4 @@
-This is official kutirShilpo github repo
+This is official kutirShilpo source code
 
 ## Getting Started
 
