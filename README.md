@@ -38,5 +38,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 This
 - I started this project in year 2021 after covid
 - Me and my two friends start this project
-- And we won the best project in my batch
+- And we won the best project in my batch that inspire me to continue this project
 - And I have a plan for this project
