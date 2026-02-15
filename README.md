@@ -34,9 +34,8 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
 
 ## About this Project
-- This is my first startup project
-This
-- I started this project in year 2021 after covid
-- Me and my two friends start this project
-- And we won the best project in my batch that inspire me to continue this project
-- And I have a plan for this project
+- This is my first startup project.
+- I started this project in 2021 after COVID.
+- My two friends and I started this project together.
+- We won the Best Project award in my batch, which inspired me to continue working on it.
+- I have a clear plan for this project.
