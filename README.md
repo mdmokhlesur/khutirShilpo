@@ -38,4 +38,3 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - I started this project in 2021 after COVID.
 - My two friends and I started this project together.
 - We won the Best Project award in my batch, which inspired me to continue working on it.
-- I have a clear plan for this project.
