@@ -24,7 +24,7 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
           userId: data?.user?.uid,
           metadata: data?.user?.metadata,
         };
-        // add user in mongodb
+        // add user in database
         fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
           method: "PUT",
           headers: {

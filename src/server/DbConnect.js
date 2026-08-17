@@ -1,26 +1,32 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
-/**
- * @type {import("mongodb").Db}
- */
-let db
-const DbConnect = async () => {
-    if (db) return db;
-    try {
-        const uri = `mongodb+srv://${process.env.NEXT_PUBLIC_db_user}:${process.env.NEXT_PUBLIC_db_pass}@cluster0.fj4vctr.mongodb.net/?retryWrites=true&w=majority`;
-        const client = new MongoClient(uri, {
-            serverApi: {
-                version: ServerApiVersion.v1,
-                strict: true,
-                deprecationErrors: true,
-            }
-        });
-        db = client.db('kutir-shilpo');
-        await client.db("admin").command({ ping: 1 });
-        console.log("Pinged your deployment. You successfully connected to MongoDB!");
-        return db;
-    } catch (error) {
-        console.log(error.message);
-    }
+import "server-only";
+import pg from "pg";
+
+const { Pool } = pg;
+
+const globalForPostgres = globalThis;
+
+const createPool = () => {
+  if (!process.env.NEXT_PUBLIC_DATABASE_URL) {
+    throw new Error("Missing NEXT_PUBLIC_DATABASE_URL environment variable");
+  }
+
+  const shouldUseSsl =
+    process.env.NODE_ENV === "production" ||
+    process.env.PGSSL === "true" ||
+    process.env.NEXT_PUBLIC_DATABASE_URL.includes("sslmode=require");
+
+  return new Pool({
+    connectionString: process.env.NEXT_PUBLIC_DATABASE_URL,
+    ssl: shouldUseSsl ? { rejectUnauthorized: false } : undefined,
+  });
+};
+
+const DbConnect = () => {
+  if (!globalForPostgres.postgresPool) {
+    globalForPostgres.postgresPool = createPool();
+  }
+
+  return globalForPostgres.postgresPool;
 };
 
 export default DbConnect;
