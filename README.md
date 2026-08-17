@@ -28,7 +28,7 @@ The database connection uses `NEXT_PUBLIC_DATABASE_URL`, for example:
 NEXT_PUBLIC_DATABASE_URL=postgresql://postgres:password@localhost:5432/kutir_shilpo
 ```
 
-Create the Postgres tables before running the app:
+The app creates the required tables automatically on first database use. You can also create them manually:
 
 ```bash
 psql "$NEXT_PUBLIC_DATABASE_URL" -f database/schema.sql

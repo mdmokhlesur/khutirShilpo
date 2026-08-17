@@ -25,7 +25,7 @@ const mongoStyleWriteResult = (result) => ({
 
 // get user from db
 export const getUserFromDb = async (email) => {
-  const db = DbConnect();
+  const db = await DbConnect();
   const { rows } = await db.query(
     `
       SELECT id, name, email, image, user_id, metadata, cart_item, payments
@@ -39,7 +39,7 @@ export const getUserFromDb = async (email) => {
   return mapUser(rows[0]);
 };
 export const addUserInDb = async (loggedUser) => {
-  const db = DbConnect();
+  const db = await DbConnect();
   const result = await db.query(
     `
       INSERT INTO users (name, email, image, user_id, metadata)
@@ -65,7 +65,7 @@ export const addUserInDb = async (loggedUser) => {
 };
 
 export const updateUserActivityInDb = async (updateInfo) => {
-  const db = DbConnect();
+  const db = await DbConnect();
 
   if (updateInfo?.cartItem && updateInfo?.payments) {
     const result = await db.query(

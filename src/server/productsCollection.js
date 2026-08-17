@@ -16,7 +16,7 @@ const productFields = `
 `;
 
 export const getProductFromDb = async () => {
-  const db = DbConnect();
+  const db = await DbConnect();
   const { rows } = await db.query(`
     SELECT ${productFields}
     FROM products
@@ -26,7 +26,7 @@ export const getProductFromDb = async () => {
   return rows;
 };
 export const getProductById = async (id) => {
-  const db = DbConnect();
+  const db = await DbConnect();
   const { rows } = await db.query(
     `
       SELECT ${productFields}
@@ -40,7 +40,7 @@ export const getProductById = async (id) => {
   return rows[0] || null;
 };
 export const getProductByCategory = async (category) => {
-  const db = DbConnect();
+  const db = await DbConnect();
   const { rows } = await db.query(
     `
       SELECT ${productFields}
