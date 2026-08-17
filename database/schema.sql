@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS products (
   made_date TEXT,
   manufacture_authority TEXT,
   location TEXT,
+  active BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
@@ -30,3 +31,19 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
+
+CREATE TABLE IF NOT EXISTS orders (
+  id BIGSERIAL PRIMARY KEY,
+  email TEXT NOT NULL,
+  customer_name TEXT,
+  items JSONB DEFAULT '[]'::jsonb,
+  total NUMERIC(10, 2) DEFAULT 0,
+  payment_method TEXT,
+  status TEXT DEFAULT 'pending',
+  refund_requested BOOLEAN DEFAULT FALSE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS orders_email_idx ON orders (email);
+CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);

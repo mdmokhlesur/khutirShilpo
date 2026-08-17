@@ -12,7 +12,10 @@ export const GET=async(request)=>{
 export const PUT=async(request)=>{
     const body = await request.json();
     const result = await addUserInDb(body);
-    return NextResponse.json(result);
+    return NextResponse.json({
+        ...result,
+        role: body?.email === process.env.ADMIN_EMAIL ? "admin" : "user",
+    });
 }
 
 export const PATCH=async(request)=>{

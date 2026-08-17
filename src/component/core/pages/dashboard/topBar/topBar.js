@@ -1,7 +1,8 @@
 "use client";
 import useAuthContext from "@/hook/useAuthContext";
 import { Icon } from "@iconify/react";
-const dashboardItems =[
+
+const userDashboardItems =[
   {
     _id:1,
     title:"profile settings",
@@ -19,8 +20,18 @@ const dashboardItems =[
   }
 ]
 
+const adminDashboardItems = [
+  {
+    _id: 1,
+    title: "dashboard",
+    icon: <Icon icon="heroicons-outline:chart-bar" />,
+  },
+];
+
 const TopBar = () => {
-    const {dashboardTitle,setDashboardTitle} = useAuthContext();
+    const {dashboardTitle,setDashboardTitle,userRole} = useAuthContext();
+    const dashboardItems = userRole === "admin" ? adminDashboardItems : userDashboardItems;
+
   return (
     <div className=" h-full flex justify-end text-[#516067] rounded">
       <ul className="flex border border-t-0 gap-3">

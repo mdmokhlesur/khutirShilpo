@@ -13,6 +13,7 @@ const mapUser = (user) => {
     metadata: user.metadata || {},
     cartItem: user.cart_item || [],
     payments: user.payments || [],
+    role: user.email === process.env.ADMIN_EMAIL ? "admin" : "user",
   };
 };
 
@@ -66,6 +67,19 @@ export const addUserInDb = async (loggedUser) => {
 
 export const updateUserActivityInDb = async (updateInfo) => {
   const db = await DbConnect();
+
+  if (updateInfo?.clearCart) {
+    const result = await db.query(
+      `
+        UPDATE users
+        SET cart_item = '[]'::jsonb, updated_at = NOW()
+        WHERE email = $1
+      `,
+      [updateInfo?.email]
+    );
+
+    return mongoStyleWriteResult(result);
+  }
 
   if (updateInfo?.cartItem && updateInfo?.payments) {
     const result = await db.query(

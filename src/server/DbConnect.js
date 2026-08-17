@@ -18,11 +18,13 @@ const schemaSql = `
     made_date TEXT,
     manufacture_authority TEXT,
     location TEXT,
+    active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
   );
 
   CREATE INDEX IF NOT EXISTS products_category_idx ON products (category);
+  ALTER TABLE products ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT TRUE;
 
   CREATE TABLE IF NOT EXISTS users (
     id BIGSERIAL PRIMARY KEY,
@@ -38,6 +40,22 @@ const schemaSql = `
   );
 
   CREATE INDEX IF NOT EXISTS users_email_idx ON users (email);
+
+  CREATE TABLE IF NOT EXISTS orders (
+    id BIGSERIAL PRIMARY KEY,
+    email TEXT NOT NULL,
+    customer_name TEXT,
+    items JSONB DEFAULT '[]'::jsonb,
+    total NUMERIC(10, 2) DEFAULT 0,
+    payment_method TEXT,
+    status TEXT DEFAULT 'pending',
+    refund_requested BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+  );
+
+  CREATE INDEX IF NOT EXISTS orders_email_idx ON orders (email);
+  CREATE INDEX IF NOT EXISTS orders_status_idx ON orders (status);
 `;
 
 const getConnectionString = () => {

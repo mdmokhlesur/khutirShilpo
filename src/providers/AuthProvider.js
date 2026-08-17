@@ -1,45 +1,42 @@
 "use client";
 import auth, { googleProvider } from "@/firebase.config/firebaseAuth";
 import { onAuthStateChanged, signInWithPopup, signOut } from "firebase/auth";
-import { createContext, useEffect, useState } from "react";
+import { useEffect } from "react";
+import useAuthStore from "@/store/useAuthStore";
 
-export const AuthContext = createContext(null);
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [userLoading, setUserLoading] = useState(true);
-  // dashboard item state
-  const [dashboardTitle, setDashboardTitle] = useState("profile settings");
-
-  //   google user
-  const googleUser = () => {
-    return signInWithPopup(auth, googleProvider);
-  };
+  const setUser = useAuthStore((state) => state.setUser);
+  const setUserRole = useAuthStore((state) => state.setUserRole);
+  const setUserLoading = useAuthStore((state) => state.setUserLoading);
 
   //   user check
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUserLoading(false);
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      setUserRole("user");
+
+      if (currentUser?.email) {
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_api}api/users?email=${currentUser.email}`
+          );
+          const currentDbUser = await response.json();
+          setUserRole(currentDbUser?.role || "user");
+        } catch {
+          setUserRole("user");
+        }
+      }
+
+      setUserLoading(false);
     });
     return () => {
       unsubscribe();
     };
-  }, []);
-  const logout = ()=>{
-    return signOut(auth);
-  }
+  }, [setUser, setUserLoading, setUserRole]);
 
-  const userInfo = {
-    user,
-    userLoading,
-    googleUser,
-    logout,
-    dashboardTitle,
-    setDashboardTitle,
-  };
-  return (
-    <AuthContext.Provider value={userInfo}>{children}</AuthContext.Provider>
-  );
+  return children;
 };
 
 export default AuthProvider;
+export const googleUser = () => signInWithPopup(auth, googleProvider);
+export const logout = () => signOut(auth);

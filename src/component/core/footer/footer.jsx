@@ -11,9 +11,11 @@ const Footer = () => {
         <div className="grid md:grid-cols-2 gap-4 border-b py-8">
           {/* logo */}
           <div className="h-full flex flex-col">
-            <h4 className="text-[#516067] text-xl md:text-3xl font-semibold">
-              Kutir Shilpo
-            </h4>
+            <Link href="/">
+              <h4 className="text-[#516067] text-xl md:text-3xl font-semibold">
+                Kutir Shilpo
+              </h4>
+            </Link>
             <h4 className="mt-auto text-lg text-[#516067]">Follow Us:</h4>
             <ul className="flex gap-3 mt-3">
               <li className="h-8 w-8 flex justify-center items-center bg-[#8298a2] text-white rounded">

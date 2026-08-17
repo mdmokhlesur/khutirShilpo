@@ -3,15 +3,17 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import googleLogo from "@/assets/google-logo.png";
 import useAuthContext from "@/hook/useAuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CartCount from "./cartCount";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
 
 const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
   // hooks
-  const { user, logout, userLoading, googleUser, setDashboardTitle } =
+  const { user, logout, userLoading, googleUser, setDashboardTitle, setUserRole } =
     useAuthContext();
   const { replace } = useRouter();
+  const path = usePathname();
 
   // google login handler
   const googleLoginHandler = () => {
@@ -33,9 +35,16 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
           body: JSON.stringify(loggedUser),
         })
           .then((res) => res.json())
-          .then(() => {
+          .then((savedUser) => {
+            const role = savedUser?.role || "user";
+            setUserRole(role);
             toast.success("User signed in successfully");
-            replace("/");
+            if (role === "admin") {
+              setDashboardTitle("dashboard");
+            } else {
+              setDashboardTitle("profile settings");
+            }
+            replace("/dashboard");
           })
           .catch((err) => {
             toast.error(err.message);
@@ -75,9 +84,12 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
   return (
     <div className={`bg-white`}>
       <div className="container py-4 flex justify-between items-center">
-        <h4 className="text-[#516067] text-2xl md:text-3xl font-semibold">
-          Kutir Shilpo
-        </h4>
+        <Link href="/">
+          <h4 className="text-[#516067] text-2xl md:text-3xl font-semibold">
+            Kutir Shilpo
+          </h4>
+        </Link>
+
         <div className="flex justify-between items-center gap-2">
           <form className="w-[30vw] mr-20 flex items-center justify-between py-2 px-3 rounded-full border border-[#516067]">
             <input
