@@ -33,6 +33,13 @@ const normalizeProductInput = (product) => ({
   active: product?.active !== false,
 });
 
+const createSlug = (value) =>
+  String(value || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 export const getProductFromDb = async () => {
   const db = await DbConnect();
   const { rows } = await db.query(`
@@ -56,7 +63,15 @@ export const getProductById = async (id) => {
     [id]
   );
 
-  return rows[0] || null;
+  if (rows[0]) return rows[0];
+
+  const { rows: activeProducts } = await db.query(`
+    SELECT ${productFields}
+    FROM products
+    WHERE active = TRUE
+  `);
+
+  return activeProducts.find((product) => createSlug(product?.title) === id) || null;
 };
 export const getProductByCategory = async (category) => {
   const db = await DbConnect();

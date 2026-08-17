@@ -1,10 +1,12 @@
 "use client";
 import Button from "@/component/ui/button";
+import useAddToCart from "@/hook/useAddToCart";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import React from "react";
 
 const ProductMain = ({ product, loading }) => {
+  const [addToCart, cartLoader] = useAddToCart();
   const { image, title, price } = product;
   return (
     <div className="grid grid-cols-2 gap-4 p-6 bg-slate-50 rounded-l md:p-8">
@@ -42,9 +44,13 @@ const ProductMain = ({ product, loading }) => {
                   <Icon icon="heroicons-outline:plus-sm" />
                 </button>
               </form>
-              <Button className="mr-3" variant="outline">
-                Add To cart
-              </Button>
+              <button
+                className="mr-3 py-2 px-3 rounded text-[#8298a2] bg-transparent border border-[#8298a2] hover:bg-white"
+                onClick={() => addToCart(product)}
+                type="button"
+              >
+                {!cartLoader ? "Add To cart" : <div className="h-4 w-4 mini-loader"></div>}
+              </button>
               <Button>Buy now</Button>
             </div>
           </div>

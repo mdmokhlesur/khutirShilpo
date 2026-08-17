@@ -81,6 +81,53 @@ export const updateUserActivityInDb = async (updateInfo) => {
     return mongoStyleWriteResult(result);
   }
 
+  if (updateInfo?.removeCartItem) {
+    const result = await db.query(
+      `
+        UPDATE users
+        SET
+          cart_item = (
+            SELECT COALESCE(jsonb_agg(item), '[]'::jsonb)
+            FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
+            WHERE item->>'id' IS DISTINCT FROM $2
+          ),
+          updated_at = NOW()
+        WHERE email = $1
+      `,
+      [updateInfo?.email, updateInfo?.removeCartItem]
+    );
+
+    return mongoStyleWriteResult(result);
+  }
+
+  if (updateInfo?.updateCartItemQuantity) {
+    const quantity = Math.max(Number(updateInfo?.quantity || 1), 1);
+    const result = await db.query(
+      `
+        UPDATE users
+        SET
+          cart_item = (
+            SELECT COALESCE(
+              jsonb_agg(
+                CASE
+                  WHEN item->>'id' = $2
+                    THEN jsonb_set(item, '{quantity}', to_jsonb($3::int), true)
+                  ELSE item
+                END
+              ),
+              '[]'::jsonb
+            )
+            FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
+          ),
+          updated_at = NOW()
+        WHERE email = $1
+      `,
+      [updateInfo?.email, updateInfo?.updateCartItemQuantity, quantity]
+    );
+
+    return mongoStyleWriteResult(result);
+  }
+
   if (updateInfo?.cartItem && updateInfo?.payments) {
     const result = await db.query(
       `
@@ -106,15 +153,49 @@ export const updateUserActivityInDb = async (updateInfo) => {
   }
 
   if (updateInfo?.cartItem) {
+    const cartItem = {
+      ...updateInfo.cartItem,
+      quantity: Number(updateInfo?.cartItem?.quantity || 1),
+    };
     const result = await db.query(
       `
         UPDATE users
         SET
-          cart_item = COALESCE(cart_item, '[]'::jsonb) || $2::jsonb,
+          cart_item = CASE
+            WHEN EXISTS (
+              SELECT 1
+              FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
+              WHERE item->>'id' = $2
+            )
+              THEN (
+                SELECT COALESCE(
+                  jsonb_agg(
+                    CASE
+                      WHEN item->>'id' = $2
+                        THEN jsonb_set(
+                          item,
+                          '{quantity}',
+                          to_jsonb((COALESCE((item->>'quantity')::int, 1) + $3)::int),
+                          true
+                        )
+                      ELSE item
+                    END
+                  ),
+                  '[]'::jsonb
+                )
+                FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
+              )
+            ELSE COALESCE(cart_item, '[]'::jsonb) || $4::jsonb
+          END,
           updated_at = NOW()
         WHERE email = $1
       `,
-      [updateInfo?.email, JSON.stringify([updateInfo?.cartItem])]
+      [
+        updateInfo?.email,
+        cartItem.id,
+        cartItem.quantity,
+        JSON.stringify([cartItem]),
+      ]
     );
 
     return mongoStyleWriteResult(result);

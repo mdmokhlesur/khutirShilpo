@@ -7,13 +7,15 @@ import { usePathname, useRouter } from "next/navigation";
 import CartCount from "./cartCount";
 import { toast } from "react-hot-toast";
 import Link from "next/link";
+import { useState } from "react";
 
 const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
   // hooks
   const { user, logout, userLoading, googleUser, setDashboardTitle, setUserRole } =
     useAuthContext();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
   const path = usePathname();
+  const [searchText, setSearchText] = useState("");
 
   // google login handler
   const googleLoginHandler = () => {
@@ -41,6 +43,8 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
             toast.success("User signed in successfully");
             if (role === "admin") {
               setDashboardTitle("dashboard");
+              replace("/admin/dashboard");
+              return;
             } else {
               setDashboardTitle("profile settings");
             }
@@ -66,11 +70,18 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
 
   // cart Item handler
   const cartItemHandler = () => {
-    if (!user) {
-      return toast.error("You need to login first");
+    replace("/checkout");
+  };
+  const searchHandler = (event) => {
+    event.preventDefault();
+    const query = searchText.trim();
+
+    if (!query) {
+      push("/products");
+      return;
     }
-    replace("/dashboard");
-    setDashboardTitle("cart items");
+
+    push(`/products?search=${encodeURIComponent(query)}`);
   };
   // profile button handler
   const profileBtnHandler = () => {
@@ -91,13 +102,18 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
         </Link>
 
         <div className="flex justify-between items-center gap-2">
-          <form className="w-[30vw] mr-20 flex items-center justify-between py-2 px-3 rounded-full border border-[#516067]">
+          <form
+            className="w-[30vw] mr-20 flex items-center justify-between py-2 px-3 rounded-full border border-[#516067]"
+            onSubmit={searchHandler}
+          >
             <input
               type="text"
               placeholder="Search for Categories"
               className="text-sm bg-transparent"
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
             />
-            <button>
+            <button type="submit">
               <Icon
                 className="text-[#516067]"
                 icon="heroicons-outline:search"

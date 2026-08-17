@@ -12,6 +12,11 @@ const ProductCard = ({ product }) => {
   const [addToCart,cartLoader]=useAddToCart();
   
   const { replace } = useRouter();
+  const productSlug = String(product?.title || "")
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
   const viewDetailsHandler=(id)=>{
     if (!user) {
       return toast.error("You need to login first");
@@ -44,7 +49,7 @@ const ProductCard = ({ product }) => {
       </div>
       <button
         className="mt-auto font-semibold text-[#516067] w-full text-center border border-[#516067]"
-        onClick={()=>viewDetailsHandler(product?._id)}
+        onClick={()=>viewDetailsHandler(productSlug)}
       >
         view Detail
       </button>

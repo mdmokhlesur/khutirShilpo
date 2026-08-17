@@ -3,7 +3,7 @@ import ActiveLink from "../activeLink/activeLink";
 import useAuthContext from "@/hook/useAuthContext";
 
 const NavbarBottom = ({setIsLogoutShow}) => {
-    const { user } = useAuthContext();
+    const { user, userRole } = useAuthContext();
     
 
   // is logged show
@@ -20,7 +20,7 @@ const NavbarBottom = ({setIsLogoutShow}) => {
           Products
         </ActiveLink>
         {user && (
-          <ActiveLink className="py-3 px-5 text-[#516067]" href="/dashboard">
+          <ActiveLink className="py-3 px-5 text-[#516067]" href={userRole === "admin" ? "/admin/dashboard" : "/dashboard"}>
             Dashboard
           </ActiveLink>
         )}

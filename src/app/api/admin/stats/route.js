@@ -31,8 +31,10 @@ export const GET = async (request) => {
 
   return NextResponse.json({
     totalSales,
+    totalOrders: orders.length,
     totalProducts: products.length,
     totalUsers: usersResult.rows[0]?.total || 0,
+    products,
     bestProducts,
   });
 };
