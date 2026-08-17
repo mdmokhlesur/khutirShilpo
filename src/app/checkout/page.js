@@ -1,9 +1,7 @@
+import CheckoutCart from "@/component/core/pages/checkout/checkoutCart";
+
 const Checkout = () => {
-    return (
-        <div>
-            This Page is Under Construction
-        </div>
-    );
+    return <CheckoutCart />;
 };
 
 export default Checkout;

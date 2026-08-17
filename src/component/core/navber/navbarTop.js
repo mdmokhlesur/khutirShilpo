@@ -3,15 +3,19 @@ import { Icon } from "@iconify/react";
 import Image from "next/image";
 import googleLogo from "@/assets/google-logo.png";
 import useAuthContext from "@/hook/useAuthContext";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import CartCount from "./cartCount";
 import { toast } from "react-hot-toast";
+import Link from "next/link";
+import { useState } from "react";
 
 const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
   // hooks
-  const { user, logout, userLoading, googleUser, setDashboardTitle } =
+  const { user, logout, userLoading, googleUser, setDashboardTitle, setUserRole } =
     useAuthContext();
-  const { replace } = useRouter();
+  const { replace, push } = useRouter();
+  const path = usePathname();
+  const [searchText, setSearchText] = useState("");
 
   // google login handler
   const googleLoginHandler = () => {
@@ -24,7 +28,7 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
           userId: data?.user?.uid,
           metadata: data?.user?.metadata,
         };
-        // add user in mongodb
+        // add user in database
         fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
           method: "PUT",
           headers: {
@@ -33,9 +37,18 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
           body: JSON.stringify(loggedUser),
         })
           .then((res) => res.json())
-          .then(() => {
+          .then((savedUser) => {
+            const role = savedUser?.role || "user";
+            setUserRole(role);
             toast.success("User signed in successfully");
-            replace("/");
+            if (role === "admin") {
+              setDashboardTitle("dashboard");
+              replace("/admin/dashboard");
+              return;
+            } else {
+              setDashboardTitle("profile settings");
+            }
+            replace("/dashboard");
           })
           .catch((err) => {
             toast.error(err.message);
@@ -57,11 +70,18 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
 
   // cart Item handler
   const cartItemHandler = () => {
-    if (!user) {
-      return toast.error("You need to login first");
+    replace("/checkout");
+  };
+  const searchHandler = (event) => {
+    event.preventDefault();
+    const query = searchText.trim();
+
+    if (!query) {
+      push("/products");
+      return;
     }
-    replace("/dashboard");
-    setDashboardTitle("cart items");
+
+    push(`/products?search=${encodeURIComponent(query)}`);
   };
   // profile button handler
   const profileBtnHandler = () => {
@@ -75,17 +95,25 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
   return (
     <div className={`bg-white`}>
       <div className="container py-4 flex justify-between items-center">
-        <h4 className="text-[#516067] text-2xl md:text-3xl font-semibold">
-          Kutir Shilpo
-        </h4>
+        <Link href="/">
+          <h4 className="text-[#516067] text-2xl md:text-3xl font-semibold">
+            Kutir Shilpo
+          </h4>
+        </Link>
+
         <div className="flex justify-between items-center gap-2">
-          <form className="w-[30vw] mr-20 flex items-center justify-between py-2 px-3 rounded-full border border-[#516067]">
+          <form
+            className="w-[30vw] mr-20 flex items-center justify-between py-2 px-3 rounded-full border border-[#516067]"
+            onSubmit={searchHandler}
+          >
             <input
               type="text"
               placeholder="Search for Categories"
               className="text-sm bg-transparent"
+              value={searchText}
+              onChange={(event) => setSearchText(event.target.value)}
             />
-            <button>
+            <button type="submit">
               <Icon
                 className="text-[#516067]"
                 icon="heroicons-outline:search"

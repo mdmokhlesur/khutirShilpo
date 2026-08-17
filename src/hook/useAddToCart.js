@@ -3,6 +3,29 @@ import useAuthContext from "./useAuthContext";
 import useCart from "./useCart";
 import {toast} from "react-hot-toast";
 
+const guestCartKey = "kutir-shilpo:guest-cart";
+
+const getGuestCart = () => {
+  try {
+    return JSON.parse(window.localStorage.getItem(guestCartKey) || "[]");
+  } catch {
+    return [];
+  }
+};
+
+const saveGuestCart = (cartItems) => {
+  window.localStorage.setItem(guestCartKey, JSON.stringify(cartItems));
+  window.dispatchEvent(new Event("guest-cart-updated"));
+};
+
+const createCartItem = (product) => ({
+  id: product?._id,
+  name: product?.title,
+  image: product?.image,
+  price: product?.price,
+  quantity: 1,
+});
+
 const useAddToCart = () => {
     const {user}=useAuthContext();
     const [,,refetch]=useCart();
@@ -10,22 +33,32 @@ const useAddToCart = () => {
     const addToCart = (product) => {
         setAddCartLoader(true);
         if(!user?.email){
+          const cartItem = createCartItem(product);
+          const cartItems = getGuestCart();
+          const alreadyAdded = cartItems.some((item) => item?.id === cartItem.id);
+          const nextCartItems = alreadyAdded
+            ? cartItems.map((item) =>
+                item?.id === cartItem.id
+                  ? { ...item, quantity: Number(item?.quantity || 1) + 1 }
+                  : item
+              )
+            : [...cartItems, cartItem];
+
+          saveGuestCart(nextCartItems);
           setAddCartLoader(false);
-          return toast.error("You need to login first");
+          refetch();
+          return toast.success(
+            alreadyAdded ? "Cart quantity updated" : "Added cart successfully"
+          );
         }
         const updateDoc = {
           email: user?.email,
-          cartItem:{
-            id:product?._id,
-            name: product?.title,
-            image:product?.image,
-            price:product?.price
-          }
+          cartItem:createCartItem(product)
         };
         fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
           method: "PATCH",
           headers: {
-            "contain-type": "application/json",
+            "content-type": "application/json",
           },
           body: JSON.stringify(updateDoc),
         })

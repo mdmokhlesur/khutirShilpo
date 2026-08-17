@@ -14,6 +14,27 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Variables
+
+Copy `.env.example` to `.env.local` and fill in the Firebase values plus your Postgres connection string:
+
+```bash
+cp .env.example .env.local
+```
+
+The database connection uses `NEXT_PUBLIC_DATABASE_URL`. Set `ADMIN_EMAIL` to the email that should open the admin dashboard after login.
+
+```env
+NEXT_PUBLIC_DATABASE_URL=postgresql://postgres:password@localhost:5432/kutir_shilpo
+ADMIN_EMAIL=admin@example.com
+```
+
+The app creates the required tables automatically on first database use. You can also create them manually:
+
+```bash
+psql "$NEXT_PUBLIC_DATABASE_URL" -f database/schema.sql
+```
+
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.

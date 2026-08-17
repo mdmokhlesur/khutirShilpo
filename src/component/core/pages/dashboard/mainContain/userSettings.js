@@ -1,6 +1,7 @@
 "use client";
 
 import useAuthContext from "@/hook/useAuthContext";
+import { formatIsoDate } from "@/utils/formatDate";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -9,6 +10,9 @@ const UserSettings = () => {
   const [currentUser, setCurrentUser] = useState({});
   const [loading, setLoading] = useState(true);
   const { user } = useAuthContext();
+  const creationDate = formatIsoDate(currentUser?.metadata?.createdAt || user?.metadata?.creationTime);
+  const lastLoginDate = formatIsoDate(currentUser?.metadata?.lastLoginAt || user?.metadata?.lastSignInTime);
+
   useEffect(() => {
     fetch(`${process.env.NEXT_PUBLIC_api}api/users?email=${user?.email}`)
       .then((res) => res.json())
@@ -49,19 +53,18 @@ const UserSettings = () => {
             />
           </div>
           <div className="flex items-center gap-1">
-            <h4 className="font-normal">{currentUser?.bio ? bio : "Bio"}</h4>
+            <h4 className="font-normal">{currentUser?.bio || "Bio"}</h4>
             <Icon
               className="cursor-pointer relative"
               icon="heroicons-outline:pencil"
             />
           </div>
           <h4 className="text-lg font-semibold mt-4">Additional Information</h4>
-          <h4 className="font-normal mt-1">User Id: {currentUser?.userId||user?.uid}</h4>
           <h4 className="font-normal mt-1">
-            Your account {JSON.stringify(new Date(Date.now(currentUser?.metadata?.createdAt)))||user?.metadata?.creationTime} to present.
+            Your account {creationDate || "N/A"} to present.
           </h4>
           <h4 className="font-normal mt-1">
-            Lest time you logged {JSON.stringify(new Date(Date.now(currentUser?.metadata?.lastLoginAt)))||user?.metadata?.lastSignInTime}.
+            Last time you logged {lastLoginDate || "N/A"}.
           </h4>
         </div>
       ) : (

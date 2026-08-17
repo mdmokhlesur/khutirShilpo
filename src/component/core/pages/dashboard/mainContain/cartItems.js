@@ -1,4 +1,4 @@
-"use clint";
+"use client";
 import useCart from "@/hook/useCart";
 import { Icon } from "@iconify/react";
 import Image from "next/image";
@@ -38,7 +38,7 @@ const CartItems = () => {
                   {item?.price}৳
                 </td>
                 <td className="col-span-2 flex justify-center items-center h-full py-1 px-2 border-r">
-                  <Link href={`/checkout/${item._id}`}>
+                  <Link href={`/checkout/${item.id}`}>
                     <Icon
                       className="text-2xl"
                       icon="heroicons-solid:credit-card"

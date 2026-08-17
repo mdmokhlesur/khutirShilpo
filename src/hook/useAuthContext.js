@@ -1,9 +1,14 @@
 "use client"
-import { AuthContext } from "@/providers/AuthProvider";
-import { useContext } from "react";
+import { googleUser, logout } from "@/providers/AuthProvider";
+import useAuthStore from "@/store/useAuthStore";
 
 const useAuthContext = () => {
-    return useContext(AuthContext);
+    const state = useAuthStore();
+    return {
+        ...state,
+        googleUser,
+        logout,
+    };
 };
 
 export default useAuthContext;

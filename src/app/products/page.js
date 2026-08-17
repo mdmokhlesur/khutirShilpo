@@ -1,15 +1,7 @@
-import BambooProduct from "@/component/core/pages/Home/bambooProduct/bambooProduct";
-import ClayProduct from "@/component/core/pages/Home/clayProduct/clayProduct";
-import GlassProducts from "@/component/core/pages/Home/glassProduct/glassProduct";
+import ProductsCatalog from "@/component/core/pages/product/productsCatalog";
 
 const Products = () => {
-    return (
-        <>
-            <GlassProducts isProductsPage={true} />
-            <ClayProduct isProductsPage={true}/>
-            <BambooProduct isProductsPage={true} />
-        </>
-    );
+    return <ProductsCatalog />;
 };
 
 export default Products;

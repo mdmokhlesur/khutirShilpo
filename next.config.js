@@ -11,6 +11,16 @@ const nextConfig = {
         protocol: "https",
         hostname: "i.ibb.co",
       },
+      {
+        protocol: "https",
+        hostname: "**.ufs.sh",
+        pathname: "/f/**",
+      },
+      {
+        protocol: "https",
+        hostname: "utfs.io",
+        pathname: "/f/**",
+      },
     ],
   },
 };

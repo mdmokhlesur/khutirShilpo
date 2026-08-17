@@ -1,5 +1,6 @@
 "use client";
 import { Icon } from "@iconify/react";
+import { formatIsoDate } from "@/utils/formatDate";
 
 const ProductSidebar = ({ product, loading }) => {
   const { madeDate, quantity, sells, manufactureAuthority, location } = product;
@@ -10,7 +11,7 @@ const ProductSidebar = ({ product, loading }) => {
           <p>Available Quantity: {quantity}.</p>
           <p>Sells: {sells}.</p>
           <p>Manufacture: {manufactureAuthority}.</p>
-          <p>Manufacture-Date: {madeDate}.</p>
+          <p>Manufacture-Date: {formatIsoDate(madeDate) || "N/A"}.</p>
           <p className="flex gap-1 items-center">
             <Icon
               className="text-lg"

@@ -1,6 +1,7 @@
 "use client";
 import useAuthContext from "@/hook/useAuthContext";
 import { Icon } from "@iconify/react";
+
 const dashboardItems =[
   {
     _id:1,
@@ -21,6 +22,7 @@ const dashboardItems =[
 
 const TopBar = () => {
     const {dashboardTitle,setDashboardTitle} = useAuthContext();
+
   return (
     <div className=" h-full flex justify-end text-[#516067] rounded">
       <ul className="flex border border-t-0 gap-3">
