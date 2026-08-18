@@ -14,7 +14,7 @@ const UserSettings = () => {
   const lastLoginDate = formatIsoDate(currentUser?.metadata?.lastLoginAt || user?.metadata?.lastSignInTime);
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_api}api/users?email=${user?.email}`)
+    fetch(`/api/users?email=${user?.email}`)
       .then((res) => res.json())
       .then((data) => {
         setCurrentUser(data);

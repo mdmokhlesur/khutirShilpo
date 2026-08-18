@@ -7,7 +7,7 @@ const useProduct = (id) => {
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState({});
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_api}api/product?id=${id}`)
+    fetch(`/api/product?id=${id}`)
       .then((res) => res.json())
       .then((data) => {
         setProduct(data);

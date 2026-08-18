@@ -56,7 +56,7 @@ const CheckoutCart = () => {
             metadata: data?.user?.metadata,
           };
 
-          return fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+          return fetch(`/api/users`, {
             method: "PUT",
             headers: {
               "content-type": "application/json",
@@ -95,7 +95,7 @@ const CheckoutCart = () => {
     }
 
     setOrderLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/orders`, {
+    fetch(`/api/orders`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

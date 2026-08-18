@@ -25,7 +25,7 @@ const AdminOrderList = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/orders?email=${user.email}`)
+    fetch(`/api/orders?email=${user.email}`)
       .then((res) => {
         if (!res.ok) throw new Error("Orders not found");
         return res.json();
@@ -45,7 +45,7 @@ const AdminOrderList = () => {
   }, [loadOrders]);
 
   const updateStatus = (order, status) => {
-    fetch(`${process.env.NEXT_PUBLIC_api}api/orders`, {
+    fetch(`/api/orders`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

@@ -8,7 +8,7 @@ const useProducts = () => {
   const [products, setProducts] = useState([]);
   useEffect(() => {
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/products`)
+    fetch(`/api/products`)
       .then((res) => res.json())
       .then((data) => {
         setLoading(false);
@@ -25,7 +25,7 @@ export const useCategoryProducts = (category) => {
   const [CategoryProducts, setCategoryProducts] = useState([]);
   useEffect(() => {
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/products/${category}`)
+    fetch(`/api/products/${category}`)
       .then((res) => res.json())
       .then((data) => {
         setLoading(false);
