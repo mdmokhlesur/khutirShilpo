@@ -2,21 +2,6 @@ import "server-only";
 import { randomUUID } from "crypto";
 import DbConnect from "./DbConnect";
 
-const productFields = `
-  id::text AS "_id",
-  title,
-  image,
-  price,
-  category,
-  description,
-  quantity,
-  sells,
-  made_date AS "madeDate",
-  manufacture_authority AS "manufactureAuthority",
-  location,
-  active
-`;
-
 const normalizeProductInput = (product) => ({
   id: product?.id || product?._id || randomUUID(),
   title: product?.title,
@@ -40,158 +25,114 @@ const createSlug = (value) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 
-export const getProductFromDb = async () => {
-  const db = await DbConnect();
-  const { rows } = await db.query(`
-    SELECT ${productFields}
-    FROM products
-    WHERE active = TRUE
-    ORDER BY created_at DESC, title ASC
-  `);
+const mapProduct = (product) => {
+  if (!product) return null;
 
-  return rows;
+  return {
+    _id: product.id,
+    title: product.title,
+    image: product.image,
+    price: Number(product.price || 0),
+    category: product.category,
+    description: product.description,
+    quantity: product.quantity,
+    sells: product.sells,
+    madeDate: product.madeDate,
+    manufactureAuthority: product.manufactureAuthority,
+    location: product.location,
+    active: product.active,
+  };
+};
+
+export const getProductFromDb = async () => {
+  const products = await DbConnect.product.findMany({
+    where: { active: true },
+    orderBy: [{ createdAt: "desc" }, { title: "asc" }],
+  });
+
+  return products.map(mapProduct);
 };
 export const getProductById = async (id) => {
-  const db = await DbConnect();
-  const { rows } = await db.query(
-    `
-      SELECT ${productFields}
-      FROM products
-      WHERE id = $1 AND active = TRUE
-      LIMIT 1
-    `,
-    [id]
-  );
+  if (!id) return null;
 
-  if (rows[0]) return rows[0];
+  const product = await DbConnect.product.findFirst({
+    where: { id, active: true },
+  });
 
-  const { rows: activeProducts } = await db.query(`
-    SELECT ${productFields}
-    FROM products
-    WHERE active = TRUE
-  `);
+  if (product) return mapProduct(product);
 
-  return activeProducts.find((product) => createSlug(product?.title) === id) || null;
+  const activeProducts = await DbConnect.product.findMany({
+    where: { active: true },
+  });
+
+  return activeProducts
+    .map(mapProduct)
+    .find((activeProduct) => createSlug(activeProduct?.title) === id) || null;
 };
 export const getProductByCategory = async (category) => {
-  const db = await DbConnect();
-  const { rows } = await db.query(
-    `
-      SELECT ${productFields}
-      FROM products
-      WHERE category = $1 AND active = TRUE
-      ORDER BY created_at DESC, title ASC
-    `,
-    [category]
-  );
+  const products = await DbConnect.product.findMany({
+    where: { category, active: true },
+    orderBy: [{ createdAt: "desc" }, { title: "asc" }],
+  });
 
-  return rows;
+  return products.map(mapProduct);
 };
 
 export const getAllProductsForAdmin = async () => {
-  const db = await DbConnect();
-  const { rows } = await db.query(`
-    SELECT ${productFields}
-    FROM products
-    ORDER BY created_at DESC, title ASC
-  `);
+  const products = await DbConnect.product.findMany({
+    orderBy: [{ createdAt: "desc" }, { title: "asc" }],
+  });
 
-  return rows;
+  return products.map(mapProduct);
 };
 
 export const addProductInDb = async (product) => {
-  const db = await DbConnect();
   const normalizedProduct = normalizeProductInput(product);
-  const { rows } = await db.query(
-    `
-      INSERT INTO products (
-        id,
-        title,
-        image,
-        price,
-        category,
-        description,
-        quantity,
-        sells,
-        made_date,
-        manufacture_authority,
-        location,
-        active
-      )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-      RETURNING ${productFields}
-    `,
-    [
-      normalizedProduct.id,
-      normalizedProduct.title,
-      normalizedProduct.image,
-      normalizedProduct.price,
-      normalizedProduct.category,
-      normalizedProduct.description,
-      normalizedProduct.quantity,
-      normalizedProduct.sells,
-      normalizedProduct.madeDate,
-      normalizedProduct.manufactureAuthority,
-      normalizedProduct.location,
-      normalizedProduct.active,
-    ]
-  );
+  const createdProduct = await DbConnect.product.create({
+    data: normalizedProduct,
+  });
 
-  return rows[0];
+  return mapProduct(createdProduct);
 };
 
 export const updateProductInDb = async (id, product) => {
-  const db = await DbConnect();
   const normalizedProduct = normalizeProductInput({ ...product, id });
-  const { rows } = await db.query(
-    `
-      UPDATE products
-      SET
-        title = $2,
-        image = $3,
-        price = $4,
-        category = $5,
-        description = $6,
-        quantity = $7,
-        sells = $8,
-        made_date = $9,
-        manufacture_authority = $10,
-        location = $11,
-        active = $12,
-        updated_at = NOW()
-      WHERE id = $1
-      RETURNING ${productFields}
-    `,
-    [
-      id,
-      normalizedProduct.title,
-      normalizedProduct.image,
-      normalizedProduct.price,
-      normalizedProduct.category,
-      normalizedProduct.description,
-      normalizedProduct.quantity,
-      normalizedProduct.sells,
-      normalizedProduct.madeDate,
-      normalizedProduct.manufactureAuthority,
-      normalizedProduct.location,
-      normalizedProduct.active,
-    ]
-  );
 
-  return rows[0] || null;
+  try {
+    const updatedProduct = await DbConnect.product.update({
+      where: { id },
+      data: {
+        title: normalizedProduct.title,
+        image: normalizedProduct.image,
+        price: normalizedProduct.price,
+        category: normalizedProduct.category,
+        description: normalizedProduct.description,
+        quantity: normalizedProduct.quantity,
+        sells: normalizedProduct.sells,
+        madeDate: normalizedProduct.madeDate,
+        manufactureAuthority: normalizedProduct.manufactureAuthority,
+        location: normalizedProduct.location,
+        active: normalizedProduct.active,
+      },
+    });
+
+    return mapProduct(updatedProduct);
+  } catch (error) {
+    if (error?.code === "P2025") return null;
+    throw error;
+  }
 };
 
 export const setProductActiveInDb = async (id, active) => {
-  const db = await DbConnect();
-  const { rows } = await db.query(
-    `
-      UPDATE products
-      SET active = $2, updated_at = NOW()
-      WHERE id = $1
-      RETURNING ${productFields}
-    `,
-    [id, active]
-  );
+  try {
+    const updatedProduct = await DbConnect.product.update({
+      where: { id },
+      data: { active },
+    });
 
-  return rows[0] || null;
+    return mapProduct(updatedProduct);
+  } catch (error) {
+    if (error?.code === "P2025") return null;
+    throw error;
+  }
 };

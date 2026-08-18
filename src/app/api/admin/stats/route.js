@@ -13,11 +13,10 @@ export const GET = async (request) => {
     return NextResponse.json({ message: "Forbidden" }, { status: 403 });
   }
 
-  const db = await DbConnect();
-  const [products, orders, usersResult] = await Promise.all([
+  const [products, orders, totalUsers] = await Promise.all([
     getAllProductsForAdmin(),
     getOrdersFromDb({ email, isAdmin: true }),
-    db.query("SELECT COUNT(*)::int AS total FROM users"),
+    DbConnect.user.count(),
   ]);
 
   const totalSales = orders.reduce(
@@ -33,7 +32,7 @@ export const GET = async (request) => {
     totalSales,
     totalOrders: orders.length,
     totalProducts: products.length,
-    totalUsers: usersResult.rows[0]?.total || 0,
+    totalUsers,
     products,
     bestProducts,
   });
