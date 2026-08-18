@@ -5,151 +5,130 @@ const mapUser = (user) => {
   if (!user) return null;
 
   return {
-    _id: user.id,
+    _id: Number(user.id),
     name: user.name,
     email: user.email,
     image: user.image,
-    userId: user.user_id,
+    userId: user.userId,
     metadata: user.metadata || {},
-    cartItem: user.cart_item || [],
+    cartItem: user.cartItem || [],
     payments: user.payments || [],
     role: user.email === process.env.ADMIN_EMAIL ? "admin" : "user",
   };
 };
 
-const mongoStyleWriteResult = (result) => ({
+const mongoStyleWriteResult = (count = 1) => ({
   acknowledged: true,
-  matchedCount: result.rowCount,
-  modifiedCount: result.rowCount,
-  upsertedCount: result.rowCount,
+  matchedCount: count,
+  modifiedCount: count,
+  upsertedCount: count,
 });
 
 // get user from db
 export const getUserFromDb = async (email) => {
-  const db = await DbConnect();
-  const { rows } = await db.query(
-    `
-      SELECT id, name, email, image, user_id, metadata, cart_item, payments
-      FROM users
-      WHERE email = $1
-      LIMIT 1
-    `,
-    [email]
-  );
+  if (!email) return null;
 
-  return mapUser(rows[0]);
+  const user = await DbConnect.user.findUnique({
+    where: { email },
+  });
+
+  return mapUser(user);
 };
 export const addUserInDb = async (loggedUser) => {
-  const db = await DbConnect();
-  const result = await db.query(
-    `
-      INSERT INTO users (name, email, image, user_id, metadata)
-      VALUES ($1, $2, $3, $4, $5::jsonb)
-      ON CONFLICT (email)
-      DO UPDATE SET
-        name = EXCLUDED.name,
-        image = EXCLUDED.image,
-        user_id = EXCLUDED.user_id,
-        metadata = EXCLUDED.metadata,
-        updated_at = NOW()
-    `,
-    [
-      loggedUser?.name || null,
-      loggedUser?.email,
-      loggedUser?.image || null,
-      loggedUser?.userId || null,
-      JSON.stringify(loggedUser?.metadata || {}),
-    ]
-  );
+  if (!loggedUser?.email) return mongoStyleWriteResult(0);
 
-  return mongoStyleWriteResult(result);
+  await DbConnect.user.upsert({
+    where: { email: loggedUser?.email },
+    update: {
+      name: loggedUser?.name || null,
+      image: loggedUser?.image || null,
+      userId: loggedUser?.userId || null,
+      metadata: loggedUser?.metadata || {},
+    },
+    create: {
+      name: loggedUser?.name || null,
+      email: loggedUser?.email,
+      image: loggedUser?.image || null,
+      userId: loggedUser?.userId || null,
+      metadata: loggedUser?.metadata || {},
+    },
+  });
+
+  return mongoStyleWriteResult();
 };
 
 export const updateUserActivityInDb = async (updateInfo) => {
-  const db = await DbConnect();
+  if (!updateInfo?.email) {
+    return { acknowledged: false, matchedCount: 0, modifiedCount: 0 };
+  }
+
+  const updateUserCart = async (cartItemUpdater, extraData = {}) => {
+    const user = await DbConnect.user.findUnique({
+      where: { email: updateInfo?.email },
+      select: { cartItem: true },
+    });
+
+    if (!user) return mongoStyleWriteResult(0);
+
+    const cartItems = Array.isArray(user.cartItem) ? user.cartItem : [];
+    await DbConnect.user.update({
+      where: { email: updateInfo?.email },
+      data: {
+        cartItem: cartItemUpdater(cartItems),
+        ...extraData,
+      },
+    });
+
+    return mongoStyleWriteResult();
+  };
 
   if (updateInfo?.clearCart) {
-    const result = await db.query(
-      `
-        UPDATE users
-        SET cart_item = '[]'::jsonb, updated_at = NOW()
-        WHERE email = $1
-      `,
-      [updateInfo?.email]
-    );
+    const result = await DbConnect.user.updateMany({
+      where: { email: updateInfo?.email },
+      data: { cartItem: [] },
+    });
 
-    return mongoStyleWriteResult(result);
+    return mongoStyleWriteResult(result.count);
   }
 
   if (updateInfo?.removeCartItem) {
-    const result = await db.query(
-      `
-        UPDATE users
-        SET
-          cart_item = (
-            SELECT COALESCE(jsonb_agg(item), '[]'::jsonb)
-            FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
-            WHERE item->>'id' IS DISTINCT FROM $2
-          ),
-          updated_at = NOW()
-        WHERE email = $1
-      `,
-      [updateInfo?.email, updateInfo?.removeCartItem]
+    return updateUserCart((cartItems) =>
+      cartItems.filter((cartItem) => cartItem?.id !== updateInfo.removeCartItem)
     );
-
-    return mongoStyleWriteResult(result);
   }
 
   if (updateInfo?.updateCartItemQuantity) {
     const quantity = Math.max(Number(updateInfo?.quantity || 1), 1);
-    const result = await db.query(
-      `
-        UPDATE users
-        SET
-          cart_item = (
-            SELECT COALESCE(
-              jsonb_agg(
-                CASE
-                  WHEN item->>'id' = $2
-                    THEN jsonb_set(item, '{quantity}', to_jsonb($3::int), true)
-                  ELSE item
-                END
-              ),
-              '[]'::jsonb
-            )
-            FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
-          ),
-          updated_at = NOW()
-        WHERE email = $1
-      `,
-      [updateInfo?.email, updateInfo?.updateCartItemQuantity, quantity]
+    return updateUserCart((cartItems) =>
+      cartItems.map((cartItem) =>
+        cartItem?.id === updateInfo.updateCartItemQuantity
+          ? { ...cartItem, quantity }
+          : cartItem
+      )
     );
-
-    return mongoStyleWriteResult(result);
   }
 
   if (updateInfo?.cartItem && updateInfo?.payments) {
-    const result = await db.query(
-      `
-        UPDATE users
-        SET
-          cart_item = (
-            SELECT COALESCE(jsonb_agg(item), '[]'::jsonb)
-            FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
-            WHERE item->>'id' IS DISTINCT FROM $2
-          ),
-          payments = COALESCE(payments, '[]'::jsonb) || $3::jsonb,
-          updated_at = NOW()
-        WHERE email = $1
-      `,
-      [
-        updateInfo?.email,
-        updateInfo?.cartItem?.id,
-        JSON.stringify([updateInfo?.payments]),
-      ]
-    );
+    const user = await DbConnect.user.findUnique({
+      where: { email: updateInfo?.email },
+      select: { cartItem: true, payments: true },
+    });
 
-    return mongoStyleWriteResult(result);
+    if (!user) return mongoStyleWriteResult(0);
+
+    const cartItems = Array.isArray(user.cartItem) ? user.cartItem : [];
+    const payments = Array.isArray(user.payments) ? user.payments : [];
+    await DbConnect.user.update({
+      where: { email: updateInfo?.email },
+      data: {
+        cartItem: cartItems.filter(
+          (cartItem) => cartItem?.id !== updateInfo.cartItem.id
+        ),
+        payments: [...payments, updateInfo.payments],
+      },
+    });
+
+    return mongoStyleWriteResult();
   }
 
   if (updateInfo?.cartItem) {
@@ -157,48 +136,21 @@ export const updateUserActivityInDb = async (updateInfo) => {
       ...updateInfo.cartItem,
       quantity: Number(updateInfo?.cartItem?.quantity || 1),
     };
-    const result = await db.query(
-      `
-        UPDATE users
-        SET
-          cart_item = CASE
-            WHEN EXISTS (
-              SELECT 1
-              FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
-              WHERE item->>'id' = $2
-            )
-              THEN (
-                SELECT COALESCE(
-                  jsonb_agg(
-                    CASE
-                      WHEN item->>'id' = $2
-                        THEN jsonb_set(
-                          item,
-                          '{quantity}',
-                          to_jsonb((COALESCE((item->>'quantity')::int, 1) + $3)::int),
-                          true
-                        )
-                      ELSE item
-                    END
-                  ),
-                  '[]'::jsonb
-                )
-                FROM jsonb_array_elements(COALESCE(cart_item, '[]'::jsonb)) AS item
-              )
-            ELSE COALESCE(cart_item, '[]'::jsonb) || $4::jsonb
-          END,
-          updated_at = NOW()
-        WHERE email = $1
-      `,
-      [
-        updateInfo?.email,
-        cartItem.id,
-        cartItem.quantity,
-        JSON.stringify([cartItem]),
-      ]
-    );
 
-    return mongoStyleWriteResult(result);
+    return updateUserCart((cartItems) => {
+      const existingItem = cartItems.find((item) => item?.id === cartItem.id);
+
+      if (!existingItem) return [...cartItems, cartItem];
+
+      return cartItems.map((item) =>
+        item?.id === cartItem.id
+          ? {
+              ...item,
+              quantity: Number(item?.quantity || 1) + cartItem.quantity,
+            }
+          : item
+      );
+    });
   }
 
   return { acknowledged: false, matchedCount: 0, modifiedCount: 0 };

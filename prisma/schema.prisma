@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id                   String   @id
+  title                String
+  image                String?
+  price                Decimal  @default(0) @db.Decimal(10, 2)
+  category             String?
+  description          String?
+  quantity             Int      @default(0)
+  sells                Int      @default(0)
+  madeDate             String?  @map("made_date")
+  manufactureAuthority String?  @map("manufacture_authority")
+  location             String?
+  active               Boolean  @default(true)
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([category], map: "products_category_idx")
+  @@map("products")
+}
+
+model User {
+  id        BigInt   @id @default(autoincrement())
+  name      String?
+  email     String   @unique
+  image     String?
+  userId    String?  @map("user_id")
+  metadata  Json     @default("{}") @db.JsonB
+  cartItem  Json     @default("[]") @map("cart_item") @db.JsonB
+  payments  Json     @default("[]") @db.JsonB
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([email], map: "users_email_idx")
+  @@map("users")
+}
+
+model Order {
+  id              BigInt   @id @default(autoincrement())
+  email           String
+  customerName    String?  @map("customer_name")
+  items           Json     @default("[]") @db.JsonB
+  total           Decimal  @default(0) @db.Decimal(10, 2)
+  paymentMethod   String?  @map("payment_method")
+  status          String   @default("pending")
+  refundRequested Boolean  @default(false) @map("refund_requested")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([email], map: "orders_email_idx")
+  @@index([status], map: "orders_status_idx")
+  @@map("orders")
+}

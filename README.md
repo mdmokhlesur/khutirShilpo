@@ -22,17 +22,17 @@ Copy `.env.example` to `.env.local` and fill in the Firebase values plus your Po
 cp .env.example .env.local
 ```
 
-The database connection uses `NEXT_PUBLIC_DATABASE_URL`. Set `ADMIN_EMAIL` to the email that should open the admin dashboard after login.
+The database connection uses Prisma with `DATABASE_URL`. Set `ADMIN_EMAIL` to the email that should open the admin dashboard after login.
 
 ```env
-NEXT_PUBLIC_DATABASE_URL=postgresql://postgres:password@localhost:5432/kutir_shilpo
+DATABASE_URL=postgresql://postgres:password@localhost:5432/kutir_shilpo
 ADMIN_EMAIL=admin@example.com
 ```
 
-The app creates the required tables automatically on first database use. You can also create them manually:
+Create or update the database tables with Prisma:
 
 ```bash
-psql "$NEXT_PUBLIC_DATABASE_URL" -f database/schema.sql
+npm run db:push
 ```
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
