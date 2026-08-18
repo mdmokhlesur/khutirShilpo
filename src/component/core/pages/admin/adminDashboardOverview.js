@@ -15,7 +15,7 @@ const AdminDashboardOverview = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/admin/stats?email=${user.email}`)
+    fetch(`/api/admin/stats?email=${user.email}`)
       .then((res) => {
         if (!res.ok) throw new Error("Admin dashboard data not found");
         return res.json();

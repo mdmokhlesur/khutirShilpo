@@ -13,7 +13,7 @@ const AdminStats = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/admin/stats?email=${user.email}`)
+    fetch(`/api/admin/stats?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         setStats(data);

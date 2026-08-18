@@ -14,7 +14,7 @@ const PaymentHistory = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/orders?email=${user.email}`)
+    fetch(`/api/orders?email=${user.email}`)
       .then((res) => res.json())
       .then((data) => {
         setPayments(Array.isArray(data) ? data : []);

@@ -55,7 +55,7 @@ const useAddToCart = () => {
           email: user?.email,
           cartItem:createCartItem(product)
         };
-        fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+        fetch(`/api/users`, {
           method: "PATCH",
           headers: {
             "content-type": "application/json",

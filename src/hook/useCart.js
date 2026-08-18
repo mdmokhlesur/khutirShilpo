@@ -47,7 +47,7 @@ const useCart = () => {
     const mergeGuestCart = guestCartItems.length
       ? Promise.all(
           guestCartItems.map((cartItem) =>
-            fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+            fetch(`/api/users`, {
               method: "PATCH",
               headers: {
                 "content-type": "application/json",
@@ -61,7 +61,7 @@ const useCart = () => {
       : Promise.resolve();
 
     mergeGuestCart
-      .then(() => fetch(`${process.env.NEXT_PUBLIC_api}api/users?email=${user?.email}`))
+      .then(() => fetch(`/api/users?email=${user?.email}`))
       .then((res) => res.json())
       .then((data) => {
         setCartItems(data?.cartItem||[]);
@@ -80,7 +80,7 @@ const useCart = () => {
       return;
     }
 
-    fetch(`${process.env.NEXT_PUBLIC_api}api/users?email=${user?.email}`)
+    fetch(`/api/users?email=${user?.email}`)
       .then((res) => res.json())
       .then((data) => {
         setCartItems(data?.cartItem || []);
@@ -100,7 +100,7 @@ const useCart = () => {
       return Promise.resolve();
     }
 
-    return fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+    return fetch(`/api/users`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
@@ -121,7 +121,7 @@ const useCart = () => {
       return Promise.resolve();
     }
 
-    return fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+    return fetch(`/api/users`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",
@@ -141,7 +141,7 @@ const useCart = () => {
       return Promise.resolve();
     }
 
-    return fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+    return fetch(`/api/users`, {
       method: "PATCH",
       headers: {
         "content-type": "application/json",

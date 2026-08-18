@@ -29,7 +29,7 @@ const NavbarTop = ({ setIsLogoutShow, isLogoutShow }) => {
           metadata: data?.user?.metadata,
         };
         // add user in database
-        fetch(`${process.env.NEXT_PUBLIC_api}api/users`, {
+        fetch(`/api/users`, {
           method: "PUT",
           headers: {
             "content-Type": "application/json",

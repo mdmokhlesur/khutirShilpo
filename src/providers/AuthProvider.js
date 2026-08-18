@@ -18,7 +18,7 @@ const AuthProvider = ({ children }) => {
       if (currentUser?.email) {
         try {
           const response = await fetch(
-            `${process.env.NEXT_PUBLIC_api}api/users?email=${currentUser.email}`
+            `/api/users?email=${currentUser.email}`
           );
           const currentDbUser = await response.json();
           setUserRole(currentDbUser?.role || "user");

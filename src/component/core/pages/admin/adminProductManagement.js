@@ -34,7 +34,7 @@ const AdminProductManagement = () => {
     if (!user?.email) return;
 
     setLoading(true);
-    fetch(`${process.env.NEXT_PUBLIC_api}api/admin/stats?email=${user.email}`)
+    fetch(`/api/admin/stats?email=${user.email}`)
       .then((res) => {
         if (!res.ok) throw new Error("Products not found");
         return res.json();
@@ -88,8 +88,8 @@ const AdminProductManagement = () => {
     event.preventDefault();
 
     const url = editingId
-      ? `${process.env.NEXT_PUBLIC_api}api/product`
-      : `${process.env.NEXT_PUBLIC_api}api/products`;
+      ? `/api/product`
+      : `/api/products`;
     const method = editingId ? "PATCH" : "POST";
 
     fetch(url, {
@@ -114,7 +114,7 @@ const AdminProductManagement = () => {
   };
 
   const inactiveProduct = (id) => {
-    fetch(`${process.env.NEXT_PUBLIC_api}api/product?id=${id}&adminEmail=${user?.email}`, {
+    fetch(`/api/product?id=${id}&adminEmail=${user?.email}`, {
       method: "DELETE",
     })
       .then((res) => {
