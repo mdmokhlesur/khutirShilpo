@@ -132,14 +132,14 @@ const CheckoutCart = () => {
 
   if (!cartItems.length) {
     return (
-      <div className="mx-auto max-w-2xl rounded border bg-slate-50 p-8 text-center text-[#516067]">
+      <div className="artisan-card mx-auto max-w-2xl rounded p-8 text-center text-[var(--ks-ink)]">
         <Icon className="mx-auto mb-3 text-4xl" icon="heroicons-outline:shopping-cart" />
         <h1 className="text-2xl font-semibold">Your cart is empty</h1>
-        <p className="mt-2 text-sm text-[#8298a2]">
+        <p className="mt-2 text-sm text-[var(--ks-muted)]">
           Add products to your cart and come back here to place a test order.
         </p>
         <Link
-          className="mt-5 inline-flex rounded bg-[#516067] px-4 py-2 text-sm font-semibold text-white"
+          className="mt-5 inline-flex rounded bg-[var(--ks-clay)] px-4 py-2 text-sm font-semibold text-white"
           href="/products"
         >
           Browse products
@@ -149,11 +149,11 @@ const CheckoutCart = () => {
   }
 
   return (
-    <div className="py-8 text-[#516067]">
+    <div className="py-8 text-[var(--ks-ink)]">
       <div className="mb-6 flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold">Shopping Cart</h1>
-          <p className="text-sm text-[#8298a2]">
+          <p className="text-sm text-[var(--ks-muted)]">
             Review your items and create a fake order with test payment.
           </p>
         </div>
@@ -163,8 +163,8 @@ const CheckoutCart = () => {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
-        <div className="overflow-hidden rounded border bg-white">
-          <div className="hidden grid-cols-12 bg-slate-100 px-4 py-3 text-sm font-semibold md:grid">
+        <div className="artisan-card overflow-hidden rounded">
+          <div className="hidden grid-cols-12 bg-[var(--ks-cream)] px-4 py-3 text-sm font-semibold md:grid">
             <span className="col-span-6">Product</span>
             <span className="col-span-2 text-center">Quantity</span>
             <span className="col-span-2 text-right">Price</span>
@@ -187,7 +187,7 @@ const CheckoutCart = () => {
                   />
                   <div>
                     <h2 className="font-semibold">{item?.name}</h2>
-                    <p className="text-sm text-[#8298a2]">Product in cart</p>
+                    <p className="text-sm text-[var(--ks-muted)]">Product in cart</p>
                   </div>
                 </div>
 
@@ -229,7 +229,7 @@ const CheckoutCart = () => {
 
                 <div className="md:col-span-2 md:text-right">
                   <button
-                    className="inline-flex items-center gap-2 rounded border px-3 py-2 text-sm font-semibold text-red-600"
+                    className="inline-flex items-center gap-2 rounded border px-3 py-2 text-sm font-semibold text-[var(--ks-clay-dark)]"
                     onClick={() => removeCartItem(item?.id)}
                     type="button"
                   >
@@ -242,7 +242,7 @@ const CheckoutCart = () => {
           </div>
         </div>
 
-        <aside className="self-start rounded border bg-slate-50 p-5">
+        <aside className="artisan-card self-start rounded p-5">
           <h2 className="text-lg font-semibold">Order Summary</h2>
           <div className="mt-4 space-y-3 border-b pb-4 text-sm">
             <div className="flex justify-between">
@@ -265,7 +265,7 @@ const CheckoutCart = () => {
           </div>
 
           <button
-            className="mt-5 w-full rounded bg-[#516067] px-4 py-3 text-sm font-semibold text-white"
+            className="mt-5 w-full rounded bg-[var(--ks-clay)] px-4 py-3 text-sm font-semibold text-white hover:bg-[var(--ks-clay-dark)]"
             disabled={loginLoading}
             onClick={handlePurchase}
             type="button"
@@ -279,7 +279,7 @@ const CheckoutCart = () => {
               <div className="grid grid-cols-3 gap-2">
                 {unsupportedPayments.map((payment) => (
                   <button
-                    className="flex flex-col items-center justify-center gap-2 rounded border bg-white p-3 text-xs font-semibold"
+                    className="flex flex-col items-center justify-center gap-2 rounded border border-[var(--ks-border)] bg-white p-3 text-xs font-semibold"
                     key={payment.label}
                     onClick={() => handleUnsupportedPayment(payment.label)}
                     type="button"
@@ -291,7 +291,7 @@ const CheckoutCart = () => {
               </div>
 
               <button
-                className="flex w-full items-center justify-center gap-2 rounded bg-[#62d5bd] px-4 py-3 text-sm font-semibold text-[#123b34]"
+                className="flex w-full items-center justify-center gap-2 rounded bg-[var(--ks-bamboo)] px-4 py-3 text-sm font-semibold text-white"
                 disabled={orderLoading}
                 onClick={handleTestPayment}
                 type="button"

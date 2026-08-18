@@ -83,20 +83,20 @@ const ProductsCatalog = () => {
     : categories;
 
   return (
-    <div className="py-4 text-[#516067]">
+    <div className="py-6 text-[var(--ks-ink)]">
       <div className="grid gap-6 lg:grid-cols-[220px_1fr]">
-        <aside className="self-start rounded border bg-slate-50 p-4 lg:sticky lg:top-4">
+        <aside className="artisan-card self-start rounded p-4 lg:sticky lg:top-4">
           <h3 className="mb-4 text-sm font-bold uppercase">Filter Products</h3>
 
           {searchText && (
             <div className="mb-4 rounded border bg-white p-3 text-sm">
-              <p className="text-xs font-bold uppercase text-[#8298a2]">Search</p>
+              <p className="text-xs font-bold uppercase text-[var(--ks-bamboo)]">Search</p>
               <p className="mt-1 break-words">&quot;{searchParams.get("search")}&quot;</p>
             </div>
           )}
 
           <div className="border-b pb-4">
-            <p className="mb-3 text-xs font-bold uppercase text-[#8298a2]">Categories</p>
+            <p className="mb-3 text-xs font-bold uppercase text-[var(--ks-bamboo)]">Categories</p>
             <div className="space-y-3 text-sm">
               {categories.map((category) => (
                 <label key={category.value} className="flex cursor-pointer items-center justify-between gap-2">
@@ -108,7 +108,7 @@ const ProductsCatalog = () => {
                     />
                     {category.label}
                   </span>
-                  <span className="text-[#7f8f8b]">({categoryCounts[category.value] || 0})</span>
+                  <span className="text-[var(--ks-muted)]">({categoryCounts[category.value] || 0})</span>
                 </label>
               ))}
             </div>
@@ -120,7 +120,7 @@ const ProductsCatalog = () => {
               <span>৳{maxPrice}</span>
             </div>
             <input
-              className="w-full accent-[#516067]"
+              className="w-full accent-[var(--ks-clay)]"
               type="range"
               min="0"
               max="2000"
@@ -131,9 +131,9 @@ const ProductsCatalog = () => {
           </div>
 
           <div className="py-4">
-            <p className="mb-2 text-xs font-bold uppercase text-[#8298a2]">Sort</p>
+            <p className="mb-2 text-xs font-bold uppercase text-[var(--ks-bamboo)]">Sort</p>
             <select
-              className="w-full rounded border px-3 py-2 text-sm"
+              className="artisan-input w-full rounded px-3 py-2 text-sm"
               value={sortBy}
               onChange={(event) => setSortBy(event.target.value)}
             >
@@ -146,7 +146,7 @@ const ProductsCatalog = () => {
 
           {hasActiveFilters && (
             <button
-              className="w-full rounded border px-3 py-2 text-sm"
+              className="w-full rounded border border-[var(--ks-clay)] px-3 py-2 text-sm font-semibold text-[var(--ks-clay-dark)]"
               onClick={() => {
                 setSelectedCategories([]);
                 setMaxPrice(2000);
@@ -161,7 +161,7 @@ const ProductsCatalog = () => {
         </aside>
 
         <div className="min-w-0">
-          <p className="mb-2 text-sm text-[#8298a2]">
+          <p className="mb-2 text-sm text-[var(--ks-muted)]">
             Showing {filteredProducts.length} of {products.length} products
             {searchText ? ` for "${searchParams.get("search")}"` : ""}
           </p>
@@ -175,8 +175,8 @@ const ProductsCatalog = () => {
 
             return (
               <section key={category.value}>
-                <h2 className="text-xl text-[#516067] py-4">
-                  <span className="border-b-2 border-[#516067]">{category.label}</span> Products
+                <h2 className="artisan-section-title py-4 text-xl">
+                  <span>{category.label}</span> Products
                 </h2>
                 <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-5">
                   {categoryProducts.map((product) => (
@@ -188,9 +188,9 @@ const ProductsCatalog = () => {
           })}
 
           {!filteredProducts.length && (
-            <div className="rounded border bg-slate-50 p-8 text-center">
+            <div className="rounded border border-[var(--ks-border)] bg-[var(--ks-paper)] p-8 text-center">
               <h2 className="text-lg font-semibold">No products found</h2>
-              <p className="mt-2 text-sm text-[#8298a2]">
+              <p className="mt-2 text-sm text-[var(--ks-muted)]">
                 Try another search or clear the filters.
               </p>
             </div>

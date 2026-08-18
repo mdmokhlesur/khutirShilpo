@@ -3,8 +3,27 @@
 @tailwind utilities;
 
 // variable declare
-$base-color: #516067;
-$light-color: #8298a2;
+$base-color: #4b3328;
+$light-color: #7d9270;
+
+:root {
+  --ks-ink: #33241d;
+  --ks-muted: #7a6558;
+  --ks-clay: #a95f3b;
+  --ks-clay-dark: #7a3f28;
+  --ks-bamboo: #6f8a52;
+  --ks-glass: #8bb4ad;
+  --ks-cream: #fbf4e8;
+  --ks-paper: #fffaf1;
+  --ks-border: #eadcc9;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, rgba(169, 95, 59, 0.12), transparent 32rem),
+    linear-gradient(180deg, #fffaf1 0%, #f8efe0 100%);
+  color: var(--ks-ink);
+}
 
 // common css
 input:focus {
@@ -17,7 +36,7 @@ input:focus {
   height: 35px;
   width: 35px;
   border: 3px solid;
-  border-color: $base-color rgb(197, 229, 246) $base-color rgb(197, 229, 246);
+  border-color: $base-color #eadcc9 $base-color #eadcc9;
   border-radius: 50%;
   animation: 1.5s infinite loader;
 }
@@ -26,7 +45,7 @@ input:focus {
   margin-right:auto;
   display: inline-block;
   border: 3px solid;
-  border-color: $base-color rgb(197, 229, 246) $base-color rgb(197, 229, 246);
+  border-color: $base-color #eadcc9 $base-color #eadcc9;
   border-radius: 50%;
   animation: 1.5s infinite loader;
 }
@@ -44,6 +63,51 @@ input:focus {
   max-width: 1500px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.artisan-section-title {
+  color: var(--ks-ink);
+  font-weight: 700;
+}
+
+.artisan-section-title span {
+  border-bottom: 2px solid var(--ks-clay);
+}
+
+.artisan-card {
+  border: 1px solid var(--ks-border);
+  background: #fffdf8;
+  box-shadow: 0 10px 30px rgba(51, 36, 29, 0.06);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    border-color 220ms ease;
+}
+
+.artisan-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(169, 95, 59, 0.45);
+  box-shadow: 0 18px 44px rgba(51, 36, 29, 0.12);
+}
+
+.artisan-input {
+  border: 1px solid var(--ks-border);
+  background: rgba(255, 253, 248, 0.94);
+  color: var(--ks-ink);
+  transition:
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    background 180ms ease;
+}
+
+.artisan-input::placeholder {
+  color: rgba(122, 101, 88, 0.72);
+}
+
+.artisan-input:focus {
+  border-color: var(--ks-clay);
+  box-shadow: 0 0 0 3px rgba(169, 95, 59, 0.14);
+  background: white;
 }
 
 // best product card style

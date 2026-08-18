@@ -5,13 +5,13 @@ import { formatIsoDate } from "@/utils/formatDate";
 const ProductSidebar = ({ product, loading }) => {
   const { madeDate, quantity, sells, manufactureAuthority, location } = product;
   return (
-    <div className="border-l flex flex-col gap-1 bg-slate-50 rounded-r p-6 h-full">
+    <div className="flex h-full flex-col gap-3 rounded-r border border-l-0 border-[var(--ks-border)] bg-white p-6 text-[var(--ks-ink)]">
       {!loading? (
         <>
-          <p>Available Quantity: {quantity}.</p>
-          <p>Sells: {sells}.</p>
-          <p>Manufacture: {manufactureAuthority}.</p>
-          <p>Manufacture-Date: {formatIsoDate(madeDate) || "N/A"}.</p>
+          <p><span className="font-semibold">Available Quantity:</span> {quantity}.</p>
+          <p><span className="font-semibold">Sells:</span> {sells}.</p>
+          <p><span className="font-semibold">Manufacture:</span> {manufactureAuthority}.</p>
+          <p><span className="font-semibold">Manufacture-Date:</span> {formatIsoDate(madeDate) || "N/A"}.</p>
           <p className="flex gap-1 items-center">
             <Icon
               className="text-lg"

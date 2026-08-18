@@ -1,10 +1,7 @@
 "use client";
 import useAuthContext from "@/hook/useAuthContext";
-import { Icon } from "@iconify/react";
 import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
 import {toast} from "react-hot-toast";
 
 const BestProductCard = ({ product, id }) => {
@@ -20,24 +17,21 @@ const BestProductCard = ({ product, id }) => {
   return (
     <div
       onClick={()=>viewDetailsHandler(id)}
-      className="bestProductCard relative flex flex-col border rounded-t rounded-b-lg overflow-hidden cursor-pointer"
+      className="group cursor-pointer rounded-xl border border-[var(--ks-border)] bg-white p-2 shadow-sm transition hover:-translate-y-1 hover:shadow-md"
     >
-      <Image
-        height={400}
-        width={200}
-        className={`${!product?.image&&"max-h-48"} h-full w-full`}
-        src={product?.image}
-        alt="product image"
-      />
-      <div className="px-2 py-1 w-full">
-        <h4 className="text-sm font-semibold uppercase">{product?.title}</h4>
-        <p className="text-sm rounded-sm inline-block text-[#516067] font-semibold">
-          {product?.sells} sells
-        </p>
+      <div className="relative h-24 overflow-hidden rounded-lg bg-[var(--ks-cream)]">
+        <Image
+          height={140}
+          width={180}
+          className={`${!product?.image&&"max-h-48"} h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105`}
+          src={product?.image}
+          alt="product image"
+        />
       </div>
-      <div className="bestProductHoverItem absolute z-20 -bottom-[100%] left-0 h-full w-full flex gap-1 items-center justify-center text-white bg-[#8298a2]">
-        <p className="text-sm">View Details</p>
-        <Icon className="text-base" icon="heroicons-outline:arrow-right" />
+      <div className="mt-2 rounded-lg bg-[#f8e9cf] px-2 py-2 text-center">
+        <h4 className="truncate text-xs font-semibold text-[var(--ks-ink)]">
+          {product?.title}
+        </h4>
       </div>
     </div>
   );

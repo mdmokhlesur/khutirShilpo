@@ -1,7 +1,11 @@
 const Button = ({ className, children, variant }) => {
   return (
     <button
-      className={`py-2 px-3 rounded ${variant==="outline"?"text-[#8298a2] bg-transparent border border-[#8298a2] hover:bg-white":"text-white bg-[#94aeb9] hover:bg-[#8298a2]"} ${className}`}
+      className={`py-2 px-4 rounded font-semibold transition ${
+        variant === "outline"
+          ? "text-[var(--ks-clay-dark)] bg-transparent border border-[var(--ks-clay)] hover:bg-[var(--ks-paper)]"
+          : "text-white bg-[var(--ks-clay)] hover:bg-[var(--ks-clay-dark)]"
+      } ${className}`}
     >
       {children}
     </button>

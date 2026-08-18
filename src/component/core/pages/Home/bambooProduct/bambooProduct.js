@@ -11,8 +11,8 @@ const BambooProduct = ({ isProductsPage }) => {
     <>
       {!(loading) ? (
         <>
-          <h2 className="text-xl text-[#516067]  py-4">
-            <span className="border-b-2 border-[#516067]">Bamboo</span> Products
+          <h2 className="artisan-section-title py-4 text-xl">
+            <span>Bamboo</span> Products
           </h2>
           {/* show products */}
           <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-6">

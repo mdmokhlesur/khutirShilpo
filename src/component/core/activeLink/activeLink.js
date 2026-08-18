@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 const ActiveLink = ({href,className,children}) => {
     const currentPage=usePathname();
     return (
-        <Link href={href} className={`${currentPage===href&&"bg-slate-50 font-semibold text-[#8298a2]"} ${className}`}>
+        <Link href={href} className={`${currentPage===href&&"bg-white/15 font-semibold text-white"} ${className}`}>
             {children}
         </Link>
     );

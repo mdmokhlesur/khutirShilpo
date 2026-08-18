@@ -11,16 +11,16 @@ const NavbarBottom = ({setIsLogoutShow}) => {
     setIsLogoutShow(false);
   }, [user,setIsLogoutShow]);
   return (
-    <div className="bg-slate-100">
+    <div className="bg-[var(--ks-clay-dark)]">
       <div className="container flex gap-4 justify-end text-sm font-semibold">
-        <ActiveLink className="py-3 px-5 text-[#516067]" href="/">
+        <ActiveLink className="py-3 px-5 text-white/90 hover:bg-white/10" href="/">
           Home
         </ActiveLink>
-        <ActiveLink className="py-3 px-5 text-[#516067]" href="/products">
+        <ActiveLink className="py-3 px-5 text-white/90 hover:bg-white/10" href="/products">
           Products
         </ActiveLink>
         {user && (
-          <ActiveLink className="py-3 px-5 text-[#516067]" href={userRole === "admin" ? "/admin/dashboard" : "/dashboard"}>
+          <ActiveLink className="py-3 px-5 text-white/90 hover:bg-white/10" href={userRole === "admin" ? "/admin/dashboard" : "/dashboard"}>
             Dashboard
           </ActiveLink>
         )}

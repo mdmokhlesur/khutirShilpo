@@ -9,17 +9,17 @@ const ProductMain = ({ product, loading }) => {
   const [addToCart, cartLoader] = useAddToCart();
   const { image, title, price } = product;
   return (
-    <div className="grid grid-cols-2 gap-4 p-6 bg-slate-50 rounded-l md:p-8">
+    <div className="grid gap-6 rounded-l border border-[var(--ks-border)] bg-[var(--ks-paper)] p-6 md:grid-cols-2 md:p-8">
       {!loading ? (
         <>
           {image && (
-            <Image width={400} height={500} src={image} alt="product image" />
+            <Image width={400} height={500} className="rounded bg-white object-cover shadow-sm" src={image} alt="product image" />
           )}
           <div>
             <div className="border-b pb-4">
-              <h3 className="text-xl">{title}</h3>
+              <h3 className="text-2xl font-semibold text-[var(--ks-ink)]">{title}</h3>
               {/* rating star */}
-              <span className="flex mt-1 text-sm text-[#8298a2]">
+              <span className="flex mt-2 text-sm text-[var(--ks-clay)]">
                 <Icon icon="heroicons-outline:star" />
                 <Icon icon="heroicons-outline:star" />
                 <Icon icon="heroicons-outline:star" />
@@ -27,12 +27,12 @@ const ProductMain = ({ product, loading }) => {
                 <Icon icon="heroicons-outline:star" />
               </span>
             </div>
-            <h4 className="text-2xl mt-4 text-[#516067]">৳ {price}</h4>
+            <h4 className="text-3xl mt-4 font-semibold text-[var(--ks-clay-dark)]">৳ {price}</h4>
             <div className="mt-4">
               {/* quantity select from */}
               <form className="flex items-center gap-2 mb-4">
                 <label>Quantity</label>
-                <button className="bg-slate-200 text-slate-500 py-2 px-3 rounded">
+                <button className="bg-[var(--ks-cream)] text-[var(--ks-clay-dark)] py-2 px-3 rounded" type="button">
                   <Icon icon="heroicons-outline:minus-sm" />
                 </button>
                 <input
@@ -40,12 +40,12 @@ const ProductMain = ({ product, loading }) => {
                   type="number"
                   defaultValue={1}
                 />
-                <button className="bg-slate-200 text-slate-500 py-2 px-3 rounded">
+                <button className="bg-[var(--ks-cream)] text-[var(--ks-clay-dark)] py-2 px-3 rounded" type="button">
                   <Icon icon="heroicons-outline:plus-sm" />
                 </button>
               </form>
               <button
-                className="mr-3 py-2 px-3 rounded text-[#8298a2] bg-transparent border border-[#8298a2] hover:bg-white"
+                className="mr-3 py-2 px-3 rounded text-[var(--ks-clay-dark)] bg-transparent border border-[var(--ks-clay)] hover:bg-white"
                 onClick={() => addToCart(product)}
                 type="button"
               >

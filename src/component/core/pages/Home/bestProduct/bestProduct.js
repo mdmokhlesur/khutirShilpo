@@ -51,11 +51,11 @@ const bestProductObj = [
 const BestProducts = () => {
   return (
     <>
-      <h2 className="text-xl text-[#516067]  py-4">
-        <span className="border-b-2 border-[#516067]">Best</span> Products
+      <h2 className="artisan-section-title py-4 text-xl">
+        <span>Best</span> Products
       </h2>
       {/* show products */}
-      <div className="grid gap-3 grid-cols-2 md:grid-cols-4 xl:grid-cols-6">
+      <div className="grid gap-4 grid-cols-2 md:grid-cols-4 xl:grid-cols-6">
         {bestProductObj.map((product) => (
           <BestProductCard
             key={product?._id}

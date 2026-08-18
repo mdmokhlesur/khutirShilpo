@@ -13,8 +13,8 @@ const GlassProducts = ({ isProductsPage }) => {
     <>
       {!(loading) ? (
         <>
-          <h2 className="text-xl text-[#516067]  py-4">
-            <span className="border-b-2 border-[#516067]">Glass</span> Products
+          <h2 className="artisan-section-title py-4 text-xl">
+            <span>Glass</span> Products
           </h2>
           {/* show products */}
           <div className="grid gap-3 grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
